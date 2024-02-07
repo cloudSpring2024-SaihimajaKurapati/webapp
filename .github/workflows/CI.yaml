@@ -36,7 +36,7 @@ jobs:
           sudo apt-get install -y curl
           sudo systemctl start mysql
           sudo systemctl status mysql
-          mysql -u root -p Pramsai@123 -e "CREATE DATABASE health_check_db;"
+          mysql -u root -p'Pramsai@123' -e "CREATE DATABASE health_check_db;"
 
       - name: Run Tests
         run: npm test
