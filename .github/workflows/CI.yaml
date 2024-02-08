@@ -36,6 +36,7 @@ jobs:
           sudo apt-get install -y mysql-server
           sudo systemctl start mysql
           sudo systemctl status mysql
+          sudo mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'Pramsai@123'; FLUSH PRIVILEGES;"
           mysql -u root -p'Pramsai@123' -e "CREATE DATABASE IF NOT EXISTS health_check_db;"
 
       - name: Run Tests
