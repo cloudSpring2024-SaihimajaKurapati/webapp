@@ -33,10 +33,10 @@ jobs:
       - name: Configure MySQL
         run: |
           sudo apt-get update
-          sudo apt-get install -y curl
+          sudo apt-get install -y mysql-server
           sudo systemctl start mysql
           sudo systemctl status mysql
-          mysql -u root -p'Pramsai@123' -e "CREATE DATABASE health_check_db;"
+          mysql -u root -p'Pramsai@123' -e "CREATE DATABASE IF NOT EXISTS health_check_db;"
 
       - name: Run Tests
         run: npm test
