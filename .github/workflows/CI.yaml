@@ -32,12 +32,8 @@ jobs:
 
       - name: Configure MySQL
         run: |
-          sudo apt-get update
-          sudo apt-get install -y mysql-server
-          sudo systemctl start mysql
-          sudo systemctl status mysql
-          sudo mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'Pramsai@123'; FLUSH PRIVILEGES;"
-          mysql -u root -p'Pramsai@123' -e "CREATE DATABASE IF NOT EXISTS health_check_db;"
+          npm install mysql
+          node -e "const mysql = require('mysql'); const connection = mysql.createConnection({ host: 'localhost', user: 'root', password: 'Pramsai@123' }); connection.connect(function(err) { if (err) throw err; connection.query('CREATE DATABASE IF NOT EXISTS health_check_db', function (err, result) { if (err) throw err; console.log('Database created or already exists'); }); });"
 
       - name: Run Tests
         run: npm test
