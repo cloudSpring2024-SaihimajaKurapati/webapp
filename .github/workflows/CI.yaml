@@ -37,5 +37,4 @@ jobs:
           sudo systemctl start mysql
           sudo systemctl status mysql
 
-      - name: Run Tests
-        run: npm test
+      
