@@ -9,49 +9,51 @@ jobs:
   integration-tests:
     name: Run Integration Tests
     runs-on: ubuntu-latest
-    
+
     services:
       mysql:
         image: mysql:latest
         env:
           MYSQL_ROOT_PASSWORD: Pramsai@123
           MYSQL_DATABASE: health_check_db
-          MYSQL_USER: root
-          MYSQL_PASSWORD: Pramsai@123
         ports:
           - 3306:3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
           node-version: 14
-      
+
       - name: Install MySQL Client
         run: sudo apt-get update && sudo apt-get install -y mysql-client
-      
-      - name: Wait for MySQL Service to Start
+
+      - name: Wait for MySQL to start
         run: |
-          echo "Waiting for MySQL service to start..."
-          timeout 15 bash -c 'until mysqladmin ping -h localhost -u root -pPramsai@123; do sleep 1; done'
-          echo "MySQL service started successfully."
-      
+          timeout=60
+          while ! mysqladmin ping -h127.0.0.1 -uroot -pPramsai@123 --silent; do
+              ((timeout--))
+              if ((timeout == 0)); then
+                  echo "Failed to start MySQL."
+                  exit 1
+              fi
+              sleep 1
+          done
+
       - name: Create Database
-        run: |
-          mysql --host=localhost --port=3306 --user=root --password=Pramsai@123 -e "CREATE DATABASE IF NOT EXISTS health_check_db;"
-      
+        run: mysql --host=127.0.0.1 --port=3306 --user=root --password=Pramsai@123 -e "CREATE DATABASE IF NOT EXISTS health_check_db;"
+
       - name: Install Dependencies
         run: npm install
-      
+
       - name: Start Application Server
-        run: node HealthCheckServer.js &
-    
+        run: npm start &
+
       - name: Wait for Server to Start
         run: sleep 10
-      
+
       - name: Run Integration Tests
         run: npm test
