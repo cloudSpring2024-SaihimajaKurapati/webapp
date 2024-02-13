@@ -18,9 +18,15 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: 14
+      
+      - name: Install dependencies
+        run: npm install
 
       - name: Install MySQL client
         run: sudo apt-get install -y mysql-client
+      
+      - name: Install Jest
+        run: npm install --save-dev jest
 
       - name: Display .env file
         run: |
@@ -38,6 +44,6 @@ jobs:
           sudo systemctl status mysql
           sudo mysql --user=root --password=root -e "CREATE DATABASE IF NOT EXISTS health_check_db;"
           sudo mysql --user=root --password=root -e "SHOW DATABASES;"
-          
+
       - name: Run integration tests
         run: npm test
