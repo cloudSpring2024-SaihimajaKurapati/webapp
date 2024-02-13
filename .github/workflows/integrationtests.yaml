@@ -1,6 +1,9 @@
 name: Integration Tests
 
-on: [push]
+oon:
+  pull_request:
+    branches:
+      - main
 
 jobs:
   test:
