@@ -1,12 +1,13 @@
 name: Integration Tests
 
-oon:
+on:
   pull_request:
     branches:
       - main
 
 jobs:
-  test:
+  build:
+    name: CI
     runs-on: ubuntu-latest
 
     steps:
