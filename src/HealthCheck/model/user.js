@@ -46,11 +46,9 @@
 
 // userModel.js
 
-// userModel.js
-
 const { DataTypes } = require('sequelize');
 
-const defineUserModel = (sequelize) => {
+module.exports = (sequelize) => {
     const User = sequelize.define('User', {
         id: {
             type: DataTypes.UUID,
@@ -93,5 +91,3 @@ const defineUserModel = (sequelize) => {
 
     return User;
 };
-
-module.exports = defineUserModel;
