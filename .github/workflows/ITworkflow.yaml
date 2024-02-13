@@ -24,7 +24,7 @@ jobs:
 
       - name: Install required npm packages
         run: |
-          npm install --save express sequelize mysql2 dotenv bcrypt base-64
+          npm install --save express sequelize mysql2 dotenv bcrypt base-64 uuid
 
       
       - name: Install Jest
