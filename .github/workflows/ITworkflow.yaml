@@ -1,50 +1,52 @@
-name: CI Integration Test
+name: Integration Tests
 
 on:
-  pull_request:
+  push:
     branches:
       - main
 
 jobs:
-  build:
-    name: CI
+  integration-tests:
+    name: Run Integration Tests
     runs-on: ubuntu-latest
+    
+    services:
+      mysql:
+        image: mysql:latest
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: health_check_db
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
+      
       - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
           node-version: 14
-
-      - name: Install MySQL client
-        run: sudo apt-get install -y mysql-client
       
-     - name: Install Jest, supertest, and other dependencies
+      - name: Install MySQL Client
+        run: sudo apt-get update && sudo apt-get install -y mysql-client
+      
+      - name: Start MySQL Service
+        run: sudo service mysql start
+      
+      - name: Create Database
         run: |
-          npm install --save-dev jest supertest express sequelize mysql2 dotenv bcrypt base-64 uuid
-
-      - name: Display .env file
-        run: |
-          echo "DB_DIALECT=mysql" >> .env
-          echo "DB_HOST=127.0.0.1" >> .env
-          echo "DB_USERNAME=root" >> .env
-          echo "DB_PASSWORD=Pramsai@123" >> .env
-          echo "DB_PORT=3306" >> .env
-          echo "DB_NAME=health_check_db" >> .env
-          echo "APP_PORT=3000" >> .env
-          echo "MY_VALUE=myvalue" >> .env
-
-      - name: Configure MySQL and create database
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y mysql-server
-          sudo systemctl start mysql
-          sudo systemctl status mysql
-          sudo mysql --user=root --password=root -e "CREATE DATABASE IF NOT EXISTS health_check_db;"
-          sudo mysql --user=root --password=root -e "SHOW DATABASES;"
-
-      - name: Run integration tests
+          mysql --host=localhost --port=3306 --user=root --password=root -e "CREATE DATABASE IF NOT EXISTS health_check_db;"
+      
+      - name: Install Dependencies
+        run: npm install
+      
+      - name: Start Application Server
+        run: npm start &
+      
+      - name: Wait for Server to Start
+        run: sleep 10
+      
+      - name: Run Integration Tests
         run: npm test
