@@ -19,13 +19,16 @@ jobs:
       with:
         node-version: '14'
 
-    - name: Install MySQL
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y mysql-server
+    - name: Install MySQL client
+        run: sudo apt-get install -y mysql-client
 
-    - name: Start MySQL service
-      run: sudo service mysql start
+    - name: Configure MySQL and create database
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y mysql-server
+          sudo systemctl start mysql
+          sudo systemctl status mysql
+         
 
     - name: Setup MySQL database
       run: |
