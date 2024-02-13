@@ -1,4 +1,4 @@
-name: Integration Tests
+name: CI Integration Test
 
 on:
   pull_request:
@@ -6,20 +6,9 @@ on:
       - main
 
 jobs:
-  integration-tests:
-    name: Run Integration Tests
+  build:
+    name: CI
     runs-on: ubuntu-latest
-
-    services:
-      mysql:
-        image: mysql:latest
-        env:
-          MYSQL_ROOT_PASSWORD: Pramsai@123
-          MYSQL_DATABASE: health_check_db
-          MYSQL_USER: root
-          MYSQL_PASSWORD: Pramsai@123
-        ports:
-          - 3306:3306
 
     steps:
       - name: Checkout code
@@ -30,32 +19,35 @@ jobs:
         with:
           node-version: 14
 
-      - name: Install MySQL Client
-        run: sudo apt-get update && sudo apt-get install -y mysql-client
+      - name: Install MySQL client
+        run: sudo apt-get install -y mysql-client
 
-      - name: Wait for MySQL to start
+      - name: Display .env file
         run: |
-          timeout=60
-          while ! mysqladmin ping -h127.0.0.1 -uroot -pPramsai@123 --silent; do
-              ((timeout--))
-              if ((timeout == 0)); then
-                  echo "Failed to start MySQL."
-                  exit 1
-              fi
-              sleep 1
-          done
+          echo "DB_DIALECT=mysql" >> .env
+          echo "DB_HOST=127.0.0.1" >> .env
+          echo "DB_USERNAME=root" >> .env
+          echo "DB_PASSWORD=Pramsai@123" >> .env
+          echo "DB_PORT=3306" >> .env
+          echo "DB_NAME=health_check_db" >> .env
 
-      - name: Create Database
-        run: mysql --host=127.0.0.1 --port=3306 --user=root --password=Pramsai@123 -e "CREATE DATABASE IF NOT EXISTS health_check_db;"
+      - name: Configure MySQL and create database
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y mysql-server
+          sudo systemctl start mysql
+          sudo systemctl status mysql
+          sudo mysql --user=root --password=root -e "CREATE DATABASE IF NOT EXISTS health_check_db;"
+          sudo mysql --user=root --password=root -e "SHOW DATABASES;"
 
       - name: Install Dependencies
         run: npm install
 
       - name: Start Application Server
         run: node HealthCheckServer.js &
-
+    
       - name: Wait for Server to Start
         run: sleep 10
 
-      - name: Run Integration Tests
+      - name: Run integration tests
         run: npm test
