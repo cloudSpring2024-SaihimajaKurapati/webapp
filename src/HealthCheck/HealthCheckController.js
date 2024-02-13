@@ -1,6 +1,6 @@
 const { sequelize, userModel } = require('../../HealthCheckDb');
 const bcrypt = require('bcrypt');
-const { generateAndStoreToken, validateToken } = require('../../src/HealthCheck/utils/generateAuthToken');
+const { validateUser } = require('../../src/HealthCheck/utils/generateAuthToken');
 const { v4: uuidv4 } = require('uuid');
 
 const getHealthCheck = async (req, res) => {
@@ -43,18 +43,14 @@ const addUsers = async (req, res) => {
         // Creating new user with hashed password and generated UUID
         const newUser = await userModel.create({ id, firstName, lastName, userName, password: hashedPassword });
 
-        // Generate and store token for the new user
-        const token = await generateAndStoreToken(userName, password);
-
-        // Return the user details with token in the response
+        // Exclude password from the response
         const responseData = {
-            id,
-            first_name: newUser.firstName,
-            last_name: newUser.lastName,
-            username: newUser.userName,
-            account_created: newUser.createdAt,
-            account_updated: newUser.updatedAt,
-            token: token 
+            id: newUser.id,
+            firstName: newUser.firstName,
+            lastName: newUser.lastName,
+            userName: newUser.userName,
+            createdAt: newUser.createdAt,
+            updatedAt: newUser.updatedAt,
         };
 
         res.status(201).json(responseData);
@@ -66,42 +62,37 @@ const addUsers = async (req, res) => {
 
 const getUsers = async (req, res) => {
     try {
+        const authHeader = req.headers['authorization'];
 
-        const token = req.headers['authorization'];
-
-        
-        const user = await validateToken(token);
-
-        if (!user) {
-            
+        if (!authHeader || !authHeader.startsWith('Basic ')) {
             return res.status(401).send('Unauthorized');
         }
 
-        // If the token is valid, proceed to retrieve user data
-        // Fetch the authenticated user (excluding password) and send in response
-        const authenticatedUser = await userModel.findOne({ where: { userName: user.userName }, attributes: { exclude: ['password'] } });
+        const encodedCredentials = authHeader.split(' ')[1];
+        const decodedCredentials = Buffer.from(encodedCredentials, 'base64').toString('utf-8');
+        const [userName, password] = decodedCredentials.split(':');
+
+        const user = await validateUser(userName, password);
+
+        if (!user) {
+            return res.status(401).send('Unauthorized');
+        }
+
+        // If the user is valid, fetch the authenticated user (excluding password) and send in response
+        const authenticatedUser = await userModel.findOne({ where: { userName }, attributes: { exclude: ['password'] } });
         
         if (!authenticatedUser) {
-            
             return res.status(404).send('User not found');
         }
 
-        // Rename fields createdAt and updatedAt
-        const responseData = {
-            ...authenticatedUser.toJSON(),
-            id: authenticatedUser.id, // Include the id field
-            account_created: authenticatedUser.createdAt,
-            account_updated: authenticatedUser.updatedAt,
-        };
-        delete responseData.createdAt;
-        delete responseData.updatedAt;
-
-        res.status(200).json(responseData);
+        res.status(200).json(authenticatedUser);
     } catch (error) {
         console.error('Error getting users:', error);
         res.status(400).end();
     }
 };
+
+
 
 const updateUser = async (req, res) => {
     if (req.method !== 'PUT') {
@@ -109,38 +100,43 @@ const updateUser = async (req, res) => {
     }
 
     try {
-        const token = req.headers['authorization'];
+        const authHeader = req.headers['authorization'];
 
-        const user = await validateToken(token);
+        if (!authHeader || !authHeader.startsWith('Basic ')) {
+            return res.status(401).send('Unauthorized');
+        }
+
+        const encodedCredentials = authHeader.split(' ')[1];
+        const decodedCredentials = Buffer.from(encodedCredentials, 'base64').toString('utf-8');
+        const [userName, password] = decodedCredentials.split(':');
+
+        const user = await validateUser(userName, password);
 
         if (!user) {
             return res.status(401).send('Unauthorized');
         }
 
-        // If the token is valid, proceed to update user data
-        const { firstName, lastName, password, ...rest } = req.body;
+        // If the user is valid, proceed to update user data
+        const { firstName, lastName, password: newPassword, ...rest } = req.body;
 
         // Check if any fields other than firstName, lastName, and password are being updated
         if (Object.keys(rest).length !== 0) {
-            return res.status(400).end();
+            return res.status(400).send('Invalid parameters provided');
         }
 
-        // Check if any of the fields are being updated
-        const updateFields = {};
-        if (firstName) {
-            updateFields.firstName = firstName;
-        }
-        if (lastName) {
-            updateFields.lastName = lastName;
-        }
+        // Check if password is provided and update the password accordingly
         if (password) {
-            updateFields.password = await bcrypt.hash(password, 10);
+            const hashedPassword = await bcrypt.hash(password, 10);
+            await userModel.update(
+                { password: hashedPassword },
+                { where: { userName } }
+            );
         }
 
-        // Update user details
+        // Update firstName and lastName
         await userModel.update(
-            updateFields,
-            { where: { userName: user.userName } }
+            { firstName, lastName },
+            { where: { userName } }
         );
 
         res.status(204).end();
@@ -156,4 +152,3 @@ module.exports = {
     getUsers,
     updateUser,
 };
-

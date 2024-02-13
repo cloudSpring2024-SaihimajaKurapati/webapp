@@ -1,49 +1,26 @@
-const base64 = require('base-64');
 const { userModel } = require('../../../HealthCheckDb');
+const bcrypt = require('bcrypt');
 
-const generateBasicAuthToken = (userName, password) => {
-    const credentials = `${userName}:${password}`;
-    return base64.encode(credentials);
-};
-
-const generateAndStoreToken = async (userName, password) => {
-    const token = generateBasicAuthToken(userName, password);
-    
-    return token;
-};
-
-const validateToken = async (token) => {
+const validateUser = async (userName, password) => {
     try {
-        console.log('Received token:', token); 
-
-        if (token.startsWith('Bearer ')) {
-            token = token.slice(7);
-        }
-
-        // Decode the token to retrieve username
-        const decodedToken = base64.decode(token);
-        console.log('Decoded token:', decodedToken); // Add this line for debugging
-
-        const [userName] = decodedToken.split(':');
-        console.log('Username:', userName); // Add this line for debugging
-
         // Retrieve the user from the database using the username
         const user = await userModel.findOne({ where: { userName } });
 
         if (user) {
-            return user; 
+            // Compare the provided password with the hashed password stored in the database
+            const isValidPassword = await bcrypt.compare(password, user.password);
+            if (isValidPassword) {
+                return user; // User is valid
+            }
         }
 
-        return false; 
+        return false; // User not found or password is incorrect
     } catch (error) {
-        console.error('Error validating token:', error);
-        return false; // Error occurred while decoding or validating token
+        console.error('Error validating user:', error);
+        return false; // Error occurred while validating user
     }
 };
 
 module.exports = {
-    generateAndStoreToken,
-    validateToken,
+    validateUser,
 };
-
-

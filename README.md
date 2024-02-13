@@ -32,16 +32,17 @@ git remote -v
 git remote add upstream
 
 Git commands
-1. git checkout -b featurebranch
+1. git checkout -b apiassignment2
 2. git status
 3. git add
 4. git commit -m ""
-5. git push fork featurebranch
+5. git rebase org/main 
+5. git push fork apiassignment2 --force
 6. compare and create pull request
 7. workflow will run
 8. rebase and merge
 
 fork main sync:
 git checkout main
-git pull upstream main
-git push origin main
+git pull org main
+git push fork main
