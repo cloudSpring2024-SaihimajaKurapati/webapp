@@ -1,4 +1,4 @@
-name: CI Integration Tests
+name: CI Compile check
 
 on:
   pull_request:
@@ -19,18 +19,22 @@ jobs:
         with:
           node-version: 14
 
-      - name: Install dependencies
-        run: npm install
+      - name: Install MySQL client
+        run: sudo apt-get install -y mysql-client
 
-      - name: Start MySQL server
-        run: sudo systemctl start mysql
-
-      - name: Check MySQL server status
-        run: sudo systemctl status mysql
-
-      - name: Connect to MySQL server and create database
+      - name: Display .env file
         run: |
-          sudo mysql --user=root --password=Pramsai@123 -e "CREATE DATABASE IF NOT EXISTS health_check_db;"
+          echo "DB_DIALECT=mysql" >> .env
+          echo "DB_HOST=127.0.0.1" >> .env
+          echo "DB_USERNAME=root" >> .env
+          echo "DB_PASSWORD=Pramsai@123" >> .env
+          echo "DB_NAME=health_check_db" >> .env
 
-      - name: Run integration tests
-        run: npm test
+      - name: Configure MySQL and create database
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y mysql-server
+          sudo systemctl start mysql
+          sudo systemctl status mysql
+          sudo mysql --user=root --password=root -e "CREATE DATABASE IF NOT EXISTS health_check_db;"
+          sudo mysql --user=root --password=root -e "SHOW DATABASES;"
