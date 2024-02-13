@@ -37,8 +37,8 @@ jobs:
           sudo apt-get install -y mysql-server
           sudo systemctl start mysql
           sudo systemctl status mysql
-          sudo mysql --user=root --password=root -e "CREATE DATABASE IF NOT EXISTS health_check_db;"
-          sudo mysql --user=root --password=root -e "SHOW DATABASES;"
+          sudo mysql --username=root --password=Pramsai@123 -e "CREATE DATABASE IF NOT EXISTS health_check_db;"
+          sudo mysql --username=root --password=Pramsai@123 -e "SHOW DATABASES;"
 
       - name: Install Dependencies
         run: npm install
