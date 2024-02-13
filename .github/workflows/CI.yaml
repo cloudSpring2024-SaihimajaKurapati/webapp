@@ -28,6 +28,7 @@ jobs:
           echo "DB_HOST=127.0.0.1" >> .env
           echo "DB_USERNAME=root" >> .env
           echo "DB_PASSWORD=Pramsai@123" >> .env
+          echo "DB_PORT=3306" >> .env
           echo "DB_NAME=health_check_db" >> .env
 
       - name: Configure MySQL
