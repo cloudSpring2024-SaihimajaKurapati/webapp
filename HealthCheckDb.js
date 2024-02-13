@@ -5,11 +5,11 @@ const User = require('./src/HealthCheck/model/user');
 const sequelize = new Sequelize( {
     dialect: 'mysql',
     host: process.env.DB_HOST,
-    username: process.env.DB_USERNAME,
+    user: process.env.DB_USERNAME,
     password: process.env.DB_PASSWORD,
-    port: process.env.DB_PORT,
     database: process.env.DB_NAME,
-    appPort: process.env.APP_PORT
+    port: process.env.DB_PORT,
+    
 });
 
 const userModel = User(sequelize);
