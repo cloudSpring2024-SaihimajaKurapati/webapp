@@ -1,9 +1,6 @@
 name: Integration Tests
 
-on:
-  pull_request:
-    branches:
-      - main
+on: [push]
 
 jobs:
   test:
@@ -28,9 +25,9 @@ jobs:
 
     - name: Setup MySQL database
       run: |
-        mysql -u root -e "CREATE DATABASE health_check_db;"
-        mysql -u root -e "CREATE USER 'root'@'localhost' IDENTIFIED BY 'Pramsai@123';"
-        mysql -u root -e "GRANT ALL PRIVILEGES ON health_check_db.* TO 'root'@'localhost';"
+        mysql -u root -p"Pramsai@123" -e "CREATE DATABASE health_check_db;"
+        mysql -u root -p"Pramsai@123" -e "CREATE USER 'root'@'localhost' IDENTIFIED BY 'Pramsai@123';"
+        mysql -u root -p"Pramsai@123" -e "GRANT ALL PRIVILEGES ON health_check_db.* TO 'root'@'localhost';"
 
     - name: Set up environment variables
       run: |
