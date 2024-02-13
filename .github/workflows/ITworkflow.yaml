@@ -18,14 +18,16 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: 14
-      
+
+      - name: Install dependencies
+        run: npm install
+
       - name: Install MySQL client
         run: sudo apt-get install -y mysql-client
       
-      - name: Install Jest and other dependencies
+     - name: Install Jest, supertest, and other dependencies
         run: |
-          npm install --save-dev jest
-          npm install express sequelize mysql2 dotenv bcrypt base-64 uuid
+          npm install --save-dev jest supertest express sequelize mysql2 dotenv bcrypt base-64 uuid
 
       - name: Display .env file
         run: |
