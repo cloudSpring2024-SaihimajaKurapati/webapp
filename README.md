@@ -42,6 +42,7 @@ Git commands
 7. workflow will run
 8. rebase and merge
 
+
 fork main sync:
 git checkout main
 git pull org main
