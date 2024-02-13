@@ -1,4 +1,4 @@
-name: CI Compile check
+name: CI Integration Test
 
 on:
   pull_request:
@@ -38,3 +38,6 @@ jobs:
           sudo systemctl status mysql
           sudo mysql --user=root --password=root -e "CREATE DATABASE IF NOT EXISTS health_check_db;"
           sudo mysql --user=root --password=root -e "SHOW DATABASES;"
+          
+      - name: Run integration tests
+        run: npm test
