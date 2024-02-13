@@ -16,6 +16,8 @@ jobs:
         env:
           MYSQL_ROOT_PASSWORD: Pramsai@123
           MYSQL_DATABASE: health_check_db
+          MYSQL_USER: root
+          MYSQL_PASSWORD: Pramsai@123
         ports:
           - 3306:3306
 
