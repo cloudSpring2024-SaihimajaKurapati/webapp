@@ -21,14 +21,18 @@ jobs:
       
       - name: Install MySQL client
         run: sudo apt-get install -y mysql-client
-      
-      - name: Install Jest
-        run: npm install --save-dev jest
-      
+
       - name: Install required npm packages
         run: |
           npm install --save express sequelize mysql2 dotenv bcrypt base-64
 
+      
+      - name: Install Jest
+        run: npm install --save-dev jest
+
+      - name: Install supertest
+        run: npm install --save-dev supertest
+      
       - name: Display .env file
         run: |
           echo "DB_DIALECT=mysql" >> .env
