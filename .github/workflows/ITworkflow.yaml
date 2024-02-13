@@ -1,4 +1,4 @@
-name: Integration Tests
+name: CI Integration Tests
 
 on:
   pull_request:
@@ -6,8 +6,8 @@ on:
       - main
 
 jobs:
-  integration-test:
-    name: Integration Tests for /v1/user endpoint
+  build:
+    name: CI
     runs-on: ubuntu-latest
 
     steps:
@@ -22,5 +22,8 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Set NODE_ENV to development
+        run: export NODE_ENV=development
+
       - name: Run Integration Tests
-        run: npm test
+        run: npm test || exit 1
