@@ -22,6 +22,9 @@ jobs:
       - name: Install MySQL client
         run: sudo apt-get install -y mysql-client
 
+      - name: Install Dependencies
+        run: npm install
+
       - name: Display .env file
         run: |
           echo "DB_DIALECT=mysql" >> .env
@@ -37,11 +40,8 @@ jobs:
           sudo apt-get install -y mysql-server
           sudo systemctl start mysql
           sudo systemctl status mysql
-          sudo mysql --username=root --password=Pramsai@123 -e "CREATE DATABASE IF NOT EXISTS health_check_db;"
-          sudo mysql --username=root --password=Pramsai@123 -e "SHOW DATABASES;"
-
-      - name: Install Dependencies
-        run: npm install
+          sudo mysql --user=root --password=Pramsai@123 -e "CREATE DATABASE IF NOT EXISTS health_check_db;"
+          sudo mysql --user=root --password=Pramsai@123 -e "SHOW DATABASES;"
 
       - name: Start Application Server
         run: node HealthCheckServer.js &
