@@ -19,26 +19,8 @@ jobs:
         with:
           node-version: 14
 
-      - name: Install MySQL client
-        run: sudo apt-get install -y mysql-client
-
-      - name: Configure MySQL and create database
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y mysql-server
-          sudo systemctl start mysql
-          sudo systemctl status mysql
-          sudo mysql --user=root --password=root -e "CREATE DATABASE IF NOT EXISTS health_check_db;"
-          sudo mysql --user=root --password=root -e "SHOW DATABASES;"
-
-      - name: Install Dependencies
+      - name: Install dependencies
         run: npm install
-
-      - name: Start Application Server with database configuration
-        run: node HealthCheckServer.js &
-
-      - name: Wait for Server to Start
-        run: sleep 10
-
+        
       - name: Run integration tests
         run: npm test
