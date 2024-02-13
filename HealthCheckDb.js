@@ -1,6 +1,8 @@
+// HealthCheckDb.js
+
 require('dotenv').config();
 const { Sequelize } = require('sequelize');
-const User = require('./src/HealthCheck/model/user');
+const defineUserModel = require('./src/HealthCheck/model/user');
 
 const sequelize = new Sequelize( {
     dialect: process.env.DB_DIALECT,
@@ -10,7 +12,8 @@ const sequelize = new Sequelize( {
     database: process.env.DB_NAME,
 });
 
-const userModel = User(sequelize);
+const User = defineUserModel(sequelize);
+
 sequelize.sync()
     .then(() => {
         console.log('User table created successfully');
@@ -19,5 +22,4 @@ sequelize.sync()
         console.error('Error creating User table:', err);
     });
 
-module.exports = { sequelize, userModel };
-
+module.exports = { sequelize, userModel: User };
