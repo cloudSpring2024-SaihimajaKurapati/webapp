@@ -11,7 +11,6 @@ const sequelize = new Sequelize( {
     password: password,
     database: database,
 });
-
 const userModel = User(sequelize);
 sequelize.sync()
     .then(() => {
