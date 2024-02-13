@@ -27,11 +27,7 @@ jobs:
       
       - name: Install required npm packages
         run: |
-          npm install --save express sequelize dotenv bcryptjs base-64
-          
-      - name: Install supertest
-        run: npm install --save-dev supertest
-
+          npm install --save express sequelize mysql2 dotenv bcrypt base-64
 
       - name: Display .env file
         run: |
