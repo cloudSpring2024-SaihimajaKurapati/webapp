@@ -14,8 +14,10 @@ jobs:
       mysql:
         image: mysql:latest
         env:
-          MYSQL_ROOT_PASSWORD: root
+          MYSQL_ROOT_PASSWORD: Pramsai@123
           MYSQL_DATABASE: health_check_db
+          MYSQL_USER: root
+          MYSQL_PASSWORD: Pramsai@123
         ports:
           - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
@@ -32,12 +34,15 @@ jobs:
       - name: Install MySQL Client
         run: sudo apt-get update && sudo apt-get install -y mysql-client
       
-      - name: Start MySQL Service
-        run: sudo service mysql start
+      - name: Wait for MySQL Service to Start
+        run: |
+          echo "Waiting for MySQL service to start..."
+          timeout 15 bash -c 'until mysqladmin ping -h localhost -u root -pPramsai@123; do sleep 1; done'
+          echo "MySQL service started successfully."
       
       - name: Create Database
         run: |
-          mysql --host=localhost --port=3306 --user=root --password=root -e "CREATE DATABASE IF NOT EXISTS health_check_db;"
+          mysql --host=localhost --port=3306 --user=root --password=Pramsai@123 -e "CREATE DATABASE IF NOT EXISTS health_check_db;"
       
       - name: Install Dependencies
         run: npm install
