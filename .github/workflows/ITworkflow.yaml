@@ -21,25 +21,22 @@ jobs:
       
       - name: Install MySQL client
         run: sudo apt-get install -y mysql-client
-
-      - name: Install required npm packages
+      
+      - name: Install Jest and other dependencies
         run: |
-          npm install --save express sequelize mysql2 dotenv bcrypt base-64 uuid
+          npm install --save-dev jest
+          npm install express sequelize mysql2 dotenv bcrypt base-64 uuid
 
-      
-      - name: Install Jest
-        run: npm install --save-dev jest
-
-      - name: Install supertest
-        run: npm install --save-dev supertest
-      
       - name: Display .env file
         run: |
           echo "DB_DIALECT=mysql" >> .env
           echo "DB_HOST=127.0.0.1" >> .env
           echo "DB_USERNAME=root" >> .env
           echo "DB_PASSWORD=Pramsai@123" >> .env
+          echo "DB_PORT=3306" >> .env
           echo "DB_NAME=health_check_db" >> .env
+          echo "APP_PORT=3000" >> .env
+          echo "MY_VALUE=myvalue" >> .env
 
       - name: Configure MySQL and create database
         run: |

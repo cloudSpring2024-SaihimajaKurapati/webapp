@@ -9,6 +9,7 @@ const sequelize = new Sequelize( {
     password: process.env.DB_PASSWORD,
     port: process.env.DB_PORT,
     database: process.env.DB_NAME,
+    appPort: process.env.APP_PORT
 });
 
 const userModel = User(sequelize);
