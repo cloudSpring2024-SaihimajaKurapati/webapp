@@ -30,7 +30,7 @@ jobs:
 
       - name: Connect to MySQL server and create database
         run: |
-          sudo mysql --user=root --password=root -e "CREATE DATABASE IF NOT EXISTS health_check_db;"
+          sudo mysql --user=root --password=Pramsai@123 -e "CREATE DATABASE IF NOT EXISTS health_check_db;"
 
       - name: Run integration tests
         run: npm test
