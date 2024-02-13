@@ -21,22 +21,16 @@ jobs:
 
       - name: Install dependencies
         run: npm install
-      
-      - name: Display .env file
-        run: |
-          echo "DB_DIALECT=mysql" >> .env
-          echo "DB_HOST=127.0.0.1" >> .env
-          echo "DB_USERNAME=root" >> .env
-          echo "DB_PASSWORD=Pramsai@123" >> .env
-          echo "DB_NAME=health_check_db" >> .env
 
-      - name: Configure MySQL
+      - name: Start MySQL server
+        run: sudo systemctl start mysql
+
+      - name: Check MySQL server status
+        run: sudo systemctl status mysql
+
+      - name: Connect to MySQL server and create database
         run: |
-          sudo apt-get update
-          sudo apt-get install -y curl
-          sudo systemctl start mysql
-          sudo systemctl status mysql
           sudo mysql --user=root --password=root -e "CREATE DATABASE IF NOT EXISTS health_check_db;"
 
       - name: Run integration tests
-        run: npm test 
+        run: npm test
