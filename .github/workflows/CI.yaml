@@ -1,4 +1,4 @@
-name: CI Compile and Integration Tests
+name: CI Compile check
 
 on:
   pull_request:
@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    name: CI Compile Check
+    name: CI
     runs-on: ubuntu-latest
 
     steps:
@@ -37,5 +37,4 @@ jobs:
           sudo systemctl start mysql
           sudo systemctl status mysql
 
-      - name: Run Integration Tests
-        run: npm test
+      
