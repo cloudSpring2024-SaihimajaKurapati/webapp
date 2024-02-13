@@ -27,8 +27,8 @@ jobs:
 
       - name: Configure MySQL
         run: |
-          sudo mysql -u root -pPramsai@123 -e "CREATE DATABASE IF NOT EXISTS health_check_db;"
           sudo mysql -u root -pPramsai@123 -e "CREATE USER IF NOT EXISTS 'root'@'localhost' IDENTIFIED BY 'Pramsai@123';"
+          sudo mysql -u root -pPramsai@123 -e "CREATE DATABASE IF NOT EXISTS health_check_db;"
           sudo mysql -u root -pPramsai@123 -e "GRANT ALL PRIVILEGES ON health_check_db.* TO 'root'@'localhost';"
 
       - name: Install dependencies
