@@ -2,6 +2,12 @@ const request = require('supertest');
 const app = require('../HealthCheckServer'); // Assuming your server instance is exported from 'HealthCheckServer.js'
 
 describe('User Endpoint Integration Tests', () => {
+
+  afterEach(() => {
+    app.close(); // Close the server
+  });
+
+  
   it('Test 1 - Create an account and validate account exists', async () => {
     // Generate a unique username
     const username = `user_${Date.now()}`;
