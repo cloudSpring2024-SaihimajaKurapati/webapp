@@ -6,7 +6,7 @@ npm init -y
  npm i --save express
 
 3. mysql : 
-npm i mysql2
+npm i mysql2;
 
 4. sequelize:
 npm install --save sequelize
