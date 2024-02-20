@@ -1,5 +1,5 @@
 {
-  "name": "webapp",
+  "name": "webapp"
   "version": "1.0.0",
   "description": "1. create package.json : npm init -y",
   "main": "HealthCheckDb.js",
