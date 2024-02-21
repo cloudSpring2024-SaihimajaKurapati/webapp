@@ -8,10 +8,11 @@ jobs:
   packer-checks:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
       - name: Setup Packer
-        uses: hashicorp/setup-packer@v2  # Use the latest available version
+        uses: hashicorp/setup-packer@v1  # Use the latest available version
         with:
           packer-version: 1.10.0  # Specify a specific Packer version if needed
 
