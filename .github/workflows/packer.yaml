@@ -60,7 +60,7 @@ jobs:
           chmod +x nodeinstall.sh
           chmod +x userPerm.sh
           chmod +x nodeapplication.sh
-
-     
-
+          
+      - name: Validate Packer Template
+        run: packer validate webapp-packer.pkr.hcl
       
