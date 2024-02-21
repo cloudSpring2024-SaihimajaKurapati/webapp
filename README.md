@@ -40,7 +40,7 @@ Git commands
 5. git push fork apiassignment2 --force
 6. compare and create pull request
 7. workflow will run
-8. rebase and merge
+8. rebase and merge.
 
 
 fork main sync:
