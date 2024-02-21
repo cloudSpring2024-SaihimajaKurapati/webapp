@@ -1,40 +1,27 @@
-name: Packer Template Validation
+name: Packer Workflow
 
-on:
-  pull_request:
-    branches:
-      - main
+on: [pull_request]
 
 jobs:
-  Validation:
+  packer:
     runs-on: ubuntu-latest
-
+    
     steps:
-
-    - name: Check out code
+    - name: Checkout repository
       uses: actions/checkout@v2
-
-    - name: Create Zip Archive
-      run: |
-        zip -r webapp.zip ./
-
-    - name: Set up Packer
+      
+    - name: Install Packer
       run: |
         wget https://releases.hashicorp.com/packer/1.7.3/packer_1.7.3_linux_amd64.zip
         unzip packer_1.7.3_linux_amd64.zip
         chmod +x packer
         sudo mv packer /usr/local/bin/
-      shell: bash
-
+    
     - name: Initialize Packer
-      run: packer init webapp-packer.pkr.hcl
-
-    - name: Validate Packer Template
-      run: packer validate webapp-packer.pkr.hcl
-
+      run: packer init ../webapp-packer.pkr.hcl
+    
     - name: Check Formatting
-      run: |
-        if ! packer fmt -check webapp-packer.pkr.hcl; then
-          echo "Packer template formatting is incorrect."
-          exit 1
-        fi
+      run: packer fmt -check ../webapp-packer.pkr.hcl
+    
+    - name: Validate Packer Template
+      run: packer validate  ../webapp-packer.pkr.hcl
