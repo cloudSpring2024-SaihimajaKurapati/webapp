@@ -52,7 +52,7 @@ jobs:
           version: latest
 
       - name: Initialize Packer
-        run: packer init webappPackerApplication.pkr.hcl
+        run: packer init webapp-packer.pkr.hcl
 
       - name: Make scripts executable
         run: |
@@ -62,11 +62,11 @@ jobs:
           chmod +x nodeapplication.sh
 
       - name: Validate Packer Template
-        run: packer validate webappPackerApplication.pkr.hcl
+        run: packer validate webapp-packer.pkr.hcl
 
       - name: Format Packer Template
         run: |
-          if ! packer fmt -check -diff webappPackerApplication.pkr.hcl; then
+          if ! packer fmt -check -diff webapp-packer.pkr.hcl; then
             echo "Packer template is not properly formatted. Please run 'packer fmt' to format the template."
             exit 1
           fi
