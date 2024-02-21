@@ -1,41 +1,39 @@
-name: Packer format and validate
+name: Packer Template Validation
 
 on:
   pull_request:
-    branches: [main]  # Trigger only for pull requests to the main branch
+    branches:
+      - main
 
 jobs:
-  packer-checks:
+  Validation:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+    - name: Check out code
+      uses: actions/checkout@v2
 
-      - name: Setup Packer
-        uses: hashicorp/setup-packer@v1  # Use the latest available version
-        with:
-          packer-version: 1.10.0  # Specify a specific Packer version if needed
+    - name: Create Zip Archive
+      run: |
+        zip -r webapp.zip ./
 
-      - name: Run packer fmt
-        run: packer fmt -check .
+    - name: Set up Packer
+      run: |
+        wget https://releases.hashicorp.com/packer/1.7.3/packer_1.7.3_linux_amd64.zip
+        unzip packer_1.7.3_linux_amd64.zip
+        chmod +x packer
+        sudo mv packer /usr/local/bin/
+      shell: bash
 
-      - name: Fail if packer fmt modified files
-        run: |
-          if git diff --exit-code --quiet; then
-            echo "packer fmt did not modify any files"
-          else
-            echo "packer fmt modified files, please commit the changes and push again"
-            exit 1
-          fi
+    - name: Initialize Packer
+      run: packer init webapp-packer.pkr.hcl
 
-      - name: Run packer validate
-        run: packer validate .
+    - name: Validate Packer Template
+      run: packer validate webapp-packer.pkr.hcl
 
-      - name: Fail if packer validate failed
-        run: |
-          if [[ $? -eq 0 ]]; then
-            echo "packer validate successful"
-          else
-            echo "packer validate failed, please fix the template"
-            exit 1
-          fi
+    - name: Check Formatting
+      run: |
+        if ! packer fmt -check webapp-packer.pkr.hcl; then
+          echo "You Have to Fmt the file before "
+          exit 1
+        fi
