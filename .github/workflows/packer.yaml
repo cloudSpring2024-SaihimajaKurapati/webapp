@@ -1,27 +1,36 @@
-name: Packer Workflow
+name: Packer format and validate
 
-on: [pull_request]
+on:
+  pull_request:
+    branches: [main]  # Trigger only for pull requests to the main branch
 
 jobs:
-  packer:
+  packer-checks:
     runs-on: ubuntu-latest
-    
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-      
-    - name: Install Packer
-      run: |
-        wget https://releases.hashicorp.com/packer/1.7.3/packer_1.7.3_linux_amd64.zip
-        unzip packer_1.7.3_linux_amd64.zip
-        chmod +x packer
-        sudo mv packer /usr/local/bin/
-    
-    - name: Initialize Packer
-      run: packer init webapp-packer.pkr.hcl
-    
-    - name: Check Formatting
-      run: packer fmt -check webapp-packer.pkr.hcl
-    
-    - name: Validate Packer Template
-      run: packer validate  webapp-packer.pkr.hcl
+      - uses: actions/checkout@v3
+      - uses: hashicorp/setup-packer@v1
+
+      - name: Run packer fmt
+        run: packer fmt -check .
+
+      - name: Fail if packer fmt modified files
+        run: |
+          if git diff --exit-code --quiet; then
+            echo "packer fmt did not modify any files"
+          else
+            echo "packer fmt modified files, please commit the changes and push again"
+            exit 1
+          fi
+
+      - name: Run packer validate
+        run: packer validate .
+
+      - name: Fail if packer validate failed
+        run: |
+          if [[ $? -eq 0 ]]; then
+            echo "packer validate successful"
+          else
+            echo "packer validate failed, please fix the template"
+            exit 1
+          fi
