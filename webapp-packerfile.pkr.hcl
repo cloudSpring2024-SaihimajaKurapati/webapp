@@ -24,8 +24,8 @@ build {
   }
 
   provisioner "file" {
-    source      = "mysqlinstall.sh"
-    destination = "/tmp/mysqlinstall.sh"
+    source      = "sqlinstall.sh"
+    destination = "/tmp/sqlinstall.sh"
   }
   provisioner "file" {
     source      = "nodeinstall.sh"
@@ -43,7 +43,7 @@ build {
   }
 
   provisioner "shell" {
-    script = "mysqlinstall.sh"
+    script = "sqlinstall.sh"
   }
 
   provisioner "shell" {
