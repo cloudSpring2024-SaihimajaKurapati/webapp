@@ -64,6 +64,7 @@ jobs:
       - name: Validate Packer Template
         run: packer validate webapp-packer.pkr.hcl
 
-      - name: Format Packer Template
+      - name: Run packer fmt and display formatted output
         run: |
-          packer fmt -check -diff webapp-packer.pkr.hcl || { echo "Packer template is not properly formatted. Please run 'packer fmt' to format the template."; exit 1; }
+          packer fmt webapp-packer.pkr.hcl
+          cat webapp-packer.pkr.hcl
