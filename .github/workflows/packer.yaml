@@ -6,23 +6,27 @@ on:
       - main
 
 jobs:
-  build:
-    name: Validate Packer Template
+  packer_validation:
+    name: Packer Validation
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
       - name: Install Packer
         run: |
-          curl -fsSL https://releases.hashicorp.com/packer/1.7.5/packer_1.7.5_linux_amd64.zip -o packer.zip
-          unzip packer.zip
+          wget https://releases.hashicorp.com/packer/1.7.5/packer_1.7.5_linux_amd64.zip
+          unzip packer_1.7.5_linux_amd64.zip
           sudo mv packer /usr/local/bin/
 
-      - name: Format Packer Template
-        run: packer fmt webapp-packer.pkr.hcl
+      - name: Initialize Packer project
+        run: packer init .
 
+      - name: Format Packer template
+        run: packer fmt -check .
 
-      - name: Validate Packer Template
+      - name: Validate Packer template
         run: packer validate webapp-packer.pkr.hcl
+
+      
+
