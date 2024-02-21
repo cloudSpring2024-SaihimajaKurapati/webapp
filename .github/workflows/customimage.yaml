@@ -60,7 +60,7 @@ jobs:
         with:
           name: scripts
           path: |
-            /tmp/mysqlinstall.sh
+            /tmp/sqlinstall.sh
             /tmp/nodeinstall.sh
             /tmp/userPerm.sh
             /tmp/nodeapplication.sh
@@ -83,7 +83,7 @@ jobs:
 
       - name: Make scripts executable
         run: |
-          chmod +x mysqlinstall.sh
+          chmod +x sqlinstall.sh
           chmod +x nodeinstall.sh
           chmod +x userPerm.sh
           chmod +x nodeapplication.sh
