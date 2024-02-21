@@ -12,6 +12,39 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Build application artifact
+        run: zip -r application.zip ./*
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: application
+          path: application.zip
+
+      - name: Upload script artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: scripts
+          path: |
+            /tmp/mysqlinstall.sh
+            /tmp/nodeinstall.sh
+            /tmp/userPerm.sh
+            /tmp/nodeapplication.sh
+
+      - name: Make scripts executable
+        run: |
+          chmod +x mysqlinstall.sh
+          chmod +x nodeinstall.sh
+          chmod +x userPerm.sh
+          chmod +x nodeapplication.sh
+
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v0.2.0
+        with:
+          project_id: cloudgcp-414104
+          service_account_key: ${{secrets.GCP_IAM_KEYS}}
+          export_default_credentials: true
+
       - name: Setup Packer
         uses: hashicorp/setup-packer@main
         id: setup
@@ -21,7 +54,13 @@ jobs:
       - name: Initialize Packer
         run: packer init webapp-packer.pkr.hcl
 
-      - name: Validate Packer Template
-        run: packer validate webapp-packer.pkr.hcl
+      - name: Make scripts executable
+        run: |
+          chmod +x mysqlinstall.sh
+          chmod +x nodeinstall.sh
+          chmod +x userPerm.sh
+          chmod +x nodeapplication.sh
+
+     
 
       
