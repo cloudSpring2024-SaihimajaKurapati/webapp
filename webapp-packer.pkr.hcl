@@ -43,6 +43,7 @@ build {
     destination = "/tmp/nodeapplication.sh"
   }
 
+  # Grouping shell provisioners for better organization
   provisioner "shell" {
     script = "nodeinstall.sh"
   }
