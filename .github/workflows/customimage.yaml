@@ -79,7 +79,7 @@ jobs:
           version: latest
 
       - name: Initialize Packer
-        run: packer init webapp-packer.pkr.hcl
+        run: packer init webapp-packerfile.pkr.hcl
 
       - name: Make scripts executable
         run: |
