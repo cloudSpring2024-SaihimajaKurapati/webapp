@@ -20,10 +20,11 @@ jobs:
           sudo mv packer /usr/local/bin/
 
       - name: Initialize Packer project
-        run: packer init .
+        run: packer init webapp-packer.pkr.hcl
+
 
       - name: Format Packer template
-        run: packer fmt -check .
+        run: packer fmt -check webapp-packer.pkr.hcl
 
       - name: Validate Packer template
         run: packer validate webapp-packer.pkr.hcl
