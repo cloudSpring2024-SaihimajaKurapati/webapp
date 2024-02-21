@@ -13,12 +13,14 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
 
-      # Download the artifact created in the previous step
-      - name: Download artifact
-        uses: actions/download-artifact@v2
+      - name: Build application artifact
+        run: zip -r application.zip ./*
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
         with:
           name: application
-          path: ./
+          path: application.zip
 
       # Set up Packer
       - name: Setup Packer
