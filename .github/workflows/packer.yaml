@@ -1,4 +1,4 @@
-name: Packer Validation
+name: Packer Validation and Format Check
 
 on:
   pull_request:
@@ -6,8 +6,8 @@ on:
       - main
 
 jobs:
-  packer_validation:
-    name: Packer Validation
+  packer_validation_and_format_check:
+    name: Packer Validation and Format Check
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -19,15 +19,16 @@ jobs:
           unzip packer_1.7.5_linux_amd64.zip
           sudo mv packer /usr/local/bin/
 
-      - name: Initialize Packer project
-        run: packer init webapp-packer.pkr.hcl
-
-
-      - name: Format Packer template
-        run: packer fmt -check webapp-packer.pkr.hcl
-
       - name: Validate Packer template
-        run: packer validate webapp-packer.pkr.hcl
+        run: |
+          if ! packer validate webapp-packer.pkr.hcl; then
+            echo "Packer template validation failed."
+            exit 1
+          fi
 
-      
-
+      - name: Check Packer format
+        run: |
+          if ! packer fmt -check; then
+            echo "Packer format check failed. Please run 'packer fmt' to fix formatting issues."
+            exit 1
+          fi
