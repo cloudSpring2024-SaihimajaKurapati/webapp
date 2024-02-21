@@ -63,10 +63,7 @@ jobs:
 
       - name: Validate Packer Template
         run: packer validate webapp-packer.pkr.hcl
-        
+
       - name: Format Packer Template
         run: |
-          if ! packer fmt -check webapp-packer.pkr.hcl; then
-            echo "Packer template is not properly formatted. Please run 'packer fmt' to format the template."
-            exit 1
-          fi
+          packer fmt -check -diff webapp-packer.pkr.hcl || { echo "Packer template is not properly formatted. Please run 'packer fmt' to format the template."; exit 1; }
