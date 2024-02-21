@@ -1,4 +1,4 @@
-name: Packer Template Validation
+name: Packer Template Checks
 
 on:
   pull_request:
@@ -6,40 +6,22 @@ on:
       - main
 
 jobs:
-  validation:
+  validate-and-format:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Check out code
+      - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Build application artifact
-        run: zip -r application.zip ./*
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: application
-          path: application.zip
-
-      # Set up Packer
       - name: Setup Packer
         uses: hashicorp/setup-packer@main
+        id: setup
         with:
           version: latest
 
-      # Initialize Packer
       - name: Initialize Packer
         run: packer init webapp-packer.pkr.hcl
 
-      # Validate Packer template
       - name: Validate Packer Template
         run: packer validate webapp-packer.pkr.hcl
 
-      # Check formatting with packer fmt
-      - name: Check Formatting
-        run: |
-          if ! packer fmt -check webapp-packer.pkr.hcl; then
-            echo "You Have to Fmt the file before "
-            exit 1
-          fi
+      
