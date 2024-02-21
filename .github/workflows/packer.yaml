@@ -18,10 +18,10 @@ jobs:
         sudo mv packer /usr/local/bin/
     
     - name: Initialize Packer
-      run: packer init ../webapp-packer.pkr.hcl
+      run: packer init webapp-packer.pkr.hcl
     
     - name: Check Formatting
-      run: packer fmt -check ../webapp-packer.pkr.hcl
+      run: packer fmt -check webapp-packer.pkr.hcl
     
     - name: Validate Packer Template
-      run: packer validate  ../webapp-packer.pkr.hcl
+      run: packer validate  webapp-packer.pkr.hcl
