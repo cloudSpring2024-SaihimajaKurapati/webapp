@@ -79,7 +79,7 @@ jobs:
           version: latest
 
       - name: Initialize Packer
-        run: packer init webapp-packer.pkr.hcl
+        run: packer init webapp-application.pkr.hcl
 
       - name: Make scripts executable
         run: |
@@ -89,4 +89,4 @@ jobs:
           chmod +x nodeapplication.sh
 
       - name: Build Google Cloud image with Packer
-        run: packer build webapp-packer.pkr.hcl
+        run: packer build webapp-application.pkr.hcl
