@@ -6,34 +6,38 @@ on:
       - main
 
 jobs:
-  Validation:
+  validation:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Check out code
-      uses: actions/checkout@v2
+      - name: Check out code
+        uses: actions/checkout@v2
 
-    - name: Create Zip Archive
-      run: |
-        zip -r webapp.zip ./
+      # Download the artifact created in the previous step
+      - name: Download artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: application
+          path: ./
 
-    - name: Set up Packer
-      run: |
-        wget https://releases.hashicorp.com/packer/1.7.3/packer_1.7.3_linux_amd64.zip
-        unzip packer_1.7.3_linux_amd64.zip
-        chmod +x packer
-        sudo mv packer /usr/local/bin/
-      shell: bash
+      # Set up Packer
+      - name: Setup Packer
+        uses: hashicorp/setup-packer@main
+        with:
+          version: latest
 
-    - name: Initialize Packer
-      run: packer init webapp-packer.pkr.hcl
+      # Initialize Packer
+      - name: Initialize Packer
+        run: packer init webapp-packer.pkr.hcl
 
-    - name: Validate Packer Template
-      run: packer validate webapp-packer.pkr.hcl
+      # Validate Packer template
+      - name: Validate Packer Template
+        run: packer validate webapp-packer.pkr.hcl
 
-    - name: Check Formatting
-      run: |
-        if ! packer fmt -check webapp-packer.pkr.hcl; then
-          echo "You Have to Fmt the file before "
-          exit 1
-        fi
+      # Check formatting with packer fmt
+      - name: Check Formatting
+        run: |
+          if ! packer fmt -check webapp-packer.pkr.hcl; then
+            echo "You Have to Fmt the file before "
+            exit 1
+          fi
