@@ -1,24 +1,23 @@
 #!/bin/bash
 
-# Set MySQL database configuration
 DB_USERNAME=root
 DB_PASSWORD=root
 NEW_PASSWORD=root
 DB_NAME=health_check_db
 
-# Install MySQL Server and Client
+
 sudo yum install -y mysql-server mysql
 
-# Start MySQL Service
+
 sudo systemctl start mysqld
 
-# Enable MySQL to start on boot
+
 sudo systemctl enable mysqld
 
-# Wait for MySQL to start
+
 sleep 5
 
-# Secure MySQL Installation
+
 echo "Securing MySQL Installation..."
 mysql -u $DB_USERNAME -e "ALTER USER '$DB_USERNAME'@'localhost' IDENTIFIED BY '$NEW_PASSWORD';"
 
