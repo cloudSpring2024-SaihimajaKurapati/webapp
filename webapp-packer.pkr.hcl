@@ -8,11 +8,11 @@ packer {
 }
 
 source "googlecompute" "centos" {
-  project_id           = "cloudgcp-414104"  
-  source_image_family  = "centos-stream-8"
-  zone                 = "us-central1-a"
-  ssh_username         = "centos"
-  image_name           = "custom-image-{{timestamp}}"
+  project_id          = "cloudgcp-414104"
+  source_image_family = "centos-stream-8"
+  zone                = "us-central1-a"
+  ssh_username        = "centos"
+  image_name          = "custom-image-{{timestamp}}"
 }
 
 build {
@@ -27,12 +27,12 @@ build {
     source      = "mysqlinstall.sh"
     destination = "/tmp/mysqlinstall.sh"
   }
-  
+
   provisioner "file" {
     source      = "nodeinstall.sh"
     destination = "/tmp/nodeinstall.sh"
   }
-  
+
   provisioner "file" {
     source      = "userPerm.sh"
     destination = "/tmp/userPerm.sh"
