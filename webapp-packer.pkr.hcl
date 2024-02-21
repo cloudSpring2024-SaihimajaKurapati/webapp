@@ -42,13 +42,15 @@ build {
     destination = "/tmp/nodeapplication.sh"
   }
 
+  
+  provisioner "shell" {
+    script = "nodeinstall.sh"
+  }
+
   provisioner "shell" {
     script = "mysqlinstall.sh"
   }
 
-  provisioner "shell" {
-    script = "nodeinstall.sh"
-  }
 
   provisioner "shell" {
     script = "userPerm.sh"
