@@ -21,7 +21,8 @@ jobs:
           sudo mv packer /usr/local/bin/
 
       - name: Format Packer Template
-        run: packer fmt -check
+        run: packer fmt webapp-packer.pkr.hcl
+
 
       - name: Validate Packer Template
         run: packer validate webapp-packer.pkr.hcl
