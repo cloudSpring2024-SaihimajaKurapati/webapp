@@ -29,16 +29,8 @@ sudo -u csye6225 bash <<'EOF'
 # Navigate to the application directory
 cd /opt/csye6225
 
-# Set up MySQL credentials
-echo "Setting up MySQL credentials..."
-echo "export DB_DIALECT=mysql" > .env 
-echo "export DB_HOST=127.0.0.1" >> .env
-echo "export DB_USERNAME=root" >> .env
-echo "export DB_PASSWORD=root" >> .env
-echo "export DB_NAME=health_check_db" >> .env
+touch .env
 
-# Ensure correct permissions for .env file
-chmod 600 .env
+
 EOF
-sudo chmod -R 750 /opt/csye6225
 
