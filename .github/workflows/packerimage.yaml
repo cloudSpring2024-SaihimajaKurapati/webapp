@@ -17,7 +17,7 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: "14"
+          node-version: '14'
 
       - name: Install MySQL client
         run: sudo apt-get install -y mysql-client
@@ -42,7 +42,7 @@ jobs:
 
       - name: Install dependencies
         run: npm install
-
+      
       - name: Run tests
         run: npm test
 
@@ -60,15 +60,15 @@ jobs:
         with:
           name: scripts
           path: |
-            /tmp/mysqlinstall.sh
-            /tmp/nodeinstall.sh
+            
+            /tmp/install_node.sh
             /tmp/userPerm.sh
-            /tmp/nodeapplication.sh
+            /tmp/nodeapp.sh
 
       - name: Set up Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v0.2.0
         with:
-          project_id: ${{secrets.PROJECTID}}
+          project_id: cloudgcp-414104
           service_account_key: ${{secrets.GCP_IAM_KEYS}}
           export_default_credentials: true
 
@@ -79,14 +79,14 @@ jobs:
           version: latest
 
       - name: Initialize Packer
-        run: packer init webapp-application.pkr.hcl
+        run: packer init webapp-packer.pkr.hcl
 
       - name: Make scripts executable
         run: |
-          chmod +x mysqlinstall.sh
-          chmod +x nodeinstall.sh
+          chmod +x install_node.sh
           chmod +x userPerm.sh
-          chmod +x nodeapplication.sh
+          chmod +x nodeapp.sh
 
       - name: Build Google Cloud image with Packer
-        run: packer build webapp-application.pkr.hcl
+        run: packer build webapp-packer.pkr.hcl
+        
