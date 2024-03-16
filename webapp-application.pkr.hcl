@@ -41,7 +41,12 @@ build {
 
   provisioner "file" {
     source      = "opsAgentInstall.sh"
-    destination = "/tmp/nodeapplication.sh"
+    destination = "/tmp/opsAgentInstall.sh"
+  }
+
+  provisioner "file" {
+    source      = "ops-agent-config.yaml"
+    destination = "/tmp/ops-agent-config.yaml"
   }
 
   provisioner "shell" {
@@ -59,4 +64,5 @@ build {
   provisioner "shell" {
     scriptt = "opsAgentInstall.sh"
   }
+  
 }
