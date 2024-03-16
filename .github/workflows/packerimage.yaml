@@ -63,6 +63,7 @@ jobs:
             /tmp/nodeinstall.sh
             /tmp/userPerm.sh
             /tmp/nodeapplication.sh
+            /tmp/opsAgentInstall.sh
 
       - name: Set up Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v0.2.0
@@ -85,6 +86,7 @@ jobs:
           chmod +x nodeinstall.sh
           chmod +x userPerm.sh
           chmod +x nodeapplication.sh
+          chmod +x opsAgentInstall.sh
 
       - name: Build Google Cloud image with Packer
         run: packer build webapp-application.pkr.hcl

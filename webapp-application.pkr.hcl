@@ -39,6 +39,11 @@ build {
     destination = "/tmp/nodeapplication.sh"
   }
 
+  provisioner "file" {
+    source      = "opsAgentInstall.sh"
+    destination = "/tmp/nodeapplication.sh"
+  }
+
   provisioner "shell" {
     script = "nodeinstall.sh"
   }
@@ -49,5 +54,9 @@ build {
 
   provisioner "shell" {
     script = "nodeapplication.sh"
+  }
+
+  provisioner "shell" {
+    scriptt = "opsAgentInstall.sh"
   }
 }
