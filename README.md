@@ -35,7 +35,7 @@ Git commands
 1. git checkout -b apiassignment2
 2. git status
 3. git add
-4. git commit -m ""
+4. git commit -m "
 5. git rebase org/main 
 5. git push fork apiassignment2 --force
 6. compare and create pull request
