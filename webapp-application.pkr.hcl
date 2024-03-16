@@ -62,7 +62,6 @@ build {
   }
 
   provisioner "shell" {
-    scriptt = "opsAgentInstall.sh"
+    script = "opsAgentInstall.sh"
   }
-  
 }
