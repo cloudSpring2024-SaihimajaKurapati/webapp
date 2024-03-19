@@ -2,7 +2,6 @@ const { sequelize, userModel } = require('../../HealthCheckDb');
 const bcrypt = require('bcrypt');
 const { validateUser } = require('../../src/HealthCheck/utils/generateAuthToken');
 const { v4: uuidv4 } = require('uuid');
-const logger = require('../../logger_file')
 
 const getHealthCheck = async (req, res) => {
     if (req.method !== 'GET') {
@@ -12,13 +11,11 @@ const getHealthCheck = async (req, res) => {
         await sequelize.authenticate();
         const headerCount = Object.keys(req.headers).length;
         if (headerCount > 6) {
-            logger.info('Request not supported')
             return res.status(400).set('Cache-Control', 'no-cache').end();
         }
         return res.set('Cache-Control', 'no-cache').status(200).end();
     } catch (error) {
         console.error(error);
-        logger.error('Error in db creation:', error);
         return res.set('Cache-Control', 'no-cache').status(503).end();
     }
 };
@@ -28,7 +25,6 @@ const addUsers = async (req, res) => {
 
     // Check if there are any additional parameters in the request body
     if (Object.keys(rest).length !== 0) {
-        logger.debug('invalid params provided');
         return res.status(400).send('Invalid parameters provided');
     }
     try {
@@ -38,7 +34,6 @@ const addUsers = async (req, res) => {
         // Checking if user already exists
         const existingUser = await userModel.findOne({ where: { userName } });
         if (existingUser) {
-            logger.warn('User with this email already exists');
             return res.status(400).send('User with this email already exists');
         }
 
@@ -57,12 +52,10 @@ const addUsers = async (req, res) => {
             createdAt: newUser.createdAt,
             updatedAt: newUser.updatedAt,
         };
-     logger.info('user created successfully')
 
         res.status(201).json(responseData);
     } catch (error) {
         console.error('Error adding user:', error);
-        logger.error('Error adding user:', error);
         res.status(400).end();
     }
 };
@@ -72,7 +65,6 @@ const getUsers = async (req, res) => {
         const authHeader = req.headers['authorization'];
 
         if (!authHeader || !authHeader.startsWith('Basic ')) {
-            logger.error('unauthorized type');
             return res.status(401).send('Unauthorized');
         }
 
@@ -83,7 +75,6 @@ const getUsers = async (req, res) => {
         const user = await validateUser(userName, password);
 
         if (!user) {
-            logger.error('unauthorized user')
             return res.status(401).send('Unauthorized');
         }
 
@@ -93,11 +84,10 @@ const getUsers = async (req, res) => {
         if (!authenticatedUser) {
             return res.status(404).send('User not found');
         }
-        logger.info('user retrieved successfully')
+
         res.status(200).json(authenticatedUser);
     } catch (error) {
         console.error('Error getting users:', error);
-        logger.error('Error getting users:', error);
         res.status(400).end();
     }
 };
@@ -113,7 +103,6 @@ const updateUser = async (req, res) => {
         const authHeader = req.headers['authorization'];
 
         if (!authHeader || !authHeader.startsWith('Basic ')) {
-            logger.warn('unauthorized user')
             return res.status(401).send('Unauthorized');
         }
 
@@ -124,7 +113,6 @@ const updateUser = async (req, res) => {
         const user = await validateUser(userName, password);
 
         if (!user) {
-            logger.warn('unauthorized user');
             return res.status(401).send('Unauthorized');
         }
 
@@ -133,7 +121,6 @@ const updateUser = async (req, res) => {
 
         // Check if any fields other than firstName, lastName, and password are being updated
         if (Object.keys(rest).length !== 0) {
-            logger.debug('invalid params provided');
             return res.status(400).send('Invalid parameters provided');
         }
 
@@ -152,11 +139,9 @@ const updateUser = async (req, res) => {
             { where: { userName } }
         );
 
-        logger.info('user updated successfully')
         res.status(204).end();
     } catch (error) {
         console.error('Error updating user:', error);
-        logger.error('Error updating user:', error);
         res.status(400).end();
     }
 };
