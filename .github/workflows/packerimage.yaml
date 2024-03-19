@@ -65,11 +65,7 @@ jobs:
             /tmp/nodeapplication.sh
             /tmp/opsAgentInstall.sh
             /tmp/opsAgentConfig.sh
-
-      - name: Configure Logs
-        run: |
-          ops-agent configure-logs --config /tmp/ops-agent-config.yaml
-
+            
       - name: Set up Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v0.2.0
         with:
