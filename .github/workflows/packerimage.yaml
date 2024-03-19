@@ -64,7 +64,11 @@ jobs:
             /tmp/userPerm.sh
             /tmp/nodeapplication.sh
             /tmp/opsAgentInstall.sh
-            /tmp/ops-agent-config.yaml
+            /tmp/opsAgentConfig.sh
+
+      - name: Configure Logs
+        run: |
+          ops-agent configure-logs --config /tmp/ops-agent-config.yaml
 
       - name: Set up Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v0.2.0
@@ -88,7 +92,7 @@ jobs:
           chmod +x userPerm.sh
           chmod +x nodeapplication.sh
           chmod +x opsAgentInstall.sh
-          chmod +x ops-agent-config.yaml
-
+          chmod +x opsAgentConfig.sh
+          
       - name: Build Google Cloud image with Packer
         run: packer build webapp-application.pkr.hcl

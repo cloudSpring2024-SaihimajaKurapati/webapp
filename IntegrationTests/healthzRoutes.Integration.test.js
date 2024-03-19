@@ -1,5 +1,5 @@
 const request = require('supertest');
-const app = require('../HealthCheckServer'); 
+const app = require('./server_test'); 
 describe('User Endpoint Integration Tests', () => {
 
   afterEach(() => {
