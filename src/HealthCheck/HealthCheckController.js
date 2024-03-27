@@ -1,4 +1,4 @@
-const { sequelize, userModel } = require('../../HealthCheckDb');
+const { sequelize, userModel, emailVerificationModel } = require('../../HealthCheckDb');
 const bcrypt = require('bcrypt');
 const { validateUser } = require('../../src/HealthCheck/utils/generateAuthToken');
 const { v4: uuidv4 } = require('uuid');
@@ -175,8 +175,8 @@ const updateUser = async (req, res) => {
 
 const verifyUser = async (req, res) => {
     try {
-        const User = await userModelPromise;
-        const EmailVerification = await emailVerificationModelPromise;
+        const User = await userModel;
+        const EmailVerification = await emailVerificationModel;
 
         // Retrieve the user ID from the request parameters.
         const { id } = req.params;
