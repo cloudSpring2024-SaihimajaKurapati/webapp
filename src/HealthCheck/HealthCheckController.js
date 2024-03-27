@@ -4,6 +4,16 @@ const { validateUser } = require('../../src/HealthCheck/utils/generateAuthToken'
 const { v4: uuidv4 } = require('uuid');
 const logger = require('../../logger_file')
 
+async function publishMessageToPubSub(message) {
+    try {
+        await pubsub.topic(topicName).publishJSON(message);
+        console.log('Message published to Pub/Sub topic successfully');
+    } catch (error) {
+        console.error('Error publishing message to Pub/Sub topic:', error);
+        throw error;
+    }
+}
+
 const getHealthCheck = async (req, res) => {
     if (req.method !== 'GET') {
         return res.set('Cache-Control', 'no-cache').status(405).end();
@@ -58,6 +68,8 @@ const addUsers = async (req, res) => {
             updatedAt: newUser.updatedAt,
         };
      logger.info('user created successfully')
+
+     await publishMessageToPubSub(responseData);
 
         res.status(201).json(responseData);
     } catch (error) {
@@ -161,9 +173,51 @@ const updateUser = async (req, res) => {
     }
 };
 
+const verifyUser = async (req, res) => {
+    try {
+        const User = await userModelPromise;
+        const EmailVerification = await emailVerificationModelPromise;
+
+        // Retrieve the user ID from the request parameters.
+        const { id } = req.params;
+
+        // Find the user by the ID provided in the URL.
+        const user = await User.findByPk(id);
+
+        if (!user)
+            return res.status(404).send('User not found. Verification link is invalid.');
+
+        // Find the verification record for this user.
+        const verificationRecord = await EmailVerification.findOne({ where: { userId: id } });
+
+        if (!verificationRecord)
+            return res.status(404).send('Verification record not found. Link may be invalid.');
+
+        // Check if the verification link has expired (2 minutes = 120000 milliseconds).
+        if (new Date() - new Date(verificationRecord.sentAt) > 120000)
+            return res.status(400).send('Verification link has expired.');
+
+        // If the user is already verified, send an appropriate message.
+        if (verificationRecord.verified)
+            return res.status(200).send('User is already verified.');
+
+        // Verify the user
+        await verificationRecord.update({ verified: true });
+
+        // Send a successful verification message.
+        res.send('User is verified');
+    } catch (error) {
+        console.error("Error:", error);
+        // Handle the error appropriately, maybe send a response indicating failure.
+        res.status(500).send('Internal Server Error');
+    }
+};
+
+
 module.exports = {
     getHealthCheck,
     addUsers,
     getUsers,
     updateUser,
+    verifyUser,
 };
