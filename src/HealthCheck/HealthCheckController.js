@@ -2,7 +2,11 @@ const { sequelize, userModel, emailVerificationModel } = require('../../HealthCh
 const bcrypt = require('bcrypt');
 const { validateUser } = require('../../src/HealthCheck/utils/generateAuthToken');
 const { v4: uuidv4 } = require('uuid');
-const logger = require('../../logger_file')
+const logger = require('../../logger_file');
+const { PubSub } = require('@google-cloud/pubsub');
+
+const pubsub= new PubSub();
+const topicName='verify_email';
 
 async function publishMessageToPubSub(message) {
     try {
@@ -145,7 +149,7 @@ const updateUser = async (req, res) => {
 
         // Check if any fields other than firstName, lastName, and password are being updated
         if (Object.keys(rest).length !== 0) {
-            logger.debug('invalid params provided');
+            // logger.debug('invalid params provided');
             return res.status(400).send('Invalid parameters provided');
         }
 
@@ -168,7 +172,7 @@ const updateUser = async (req, res) => {
         res.status(204).end();
     } catch (error) {
         console.error('Error updating user:', error);
-        logger.error('Error updating user:', error);
+        // logger.error('Error updating user:', error);
         res.status(400).end();
     }
 };
