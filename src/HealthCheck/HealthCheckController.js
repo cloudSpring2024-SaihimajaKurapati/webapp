@@ -179,24 +179,23 @@ const updateUser = async (req, res) => {
 
 const verifyUser = async (req, res) => {
     try {
-        const User = await userModel;
-        const EmailVerification = await emailVerificationModel;
+        
 
         // Retrieve the user ID from the request parameters.
         const { id } = req.params;
 
         // Find the user by the ID provided in the URL.
-        const user = await User.findByPk(id);
+        const user = await userModel.findOne({ where: { id } });
 
         if (!user)
             return res.status(404).send('User not found. Verification link is invalid.');
 
         // Find the verification record for this user.
-        let verificationRecord = await EmailVerification.findOne({ where: { userId: id } });
+        let verificationRecord = await emailVerificationModel.findOne({ where: { userId: id } });
 
         if (!verificationRecord) {
             // Create a new verification record
-            verificationRecord = await EmailVerification.create({ userId: id });
+            verificationRecord = await emailVerificationModel.create({ userId: id });
     
             // Save the verification record to the database
             await verificationRecord.save();
