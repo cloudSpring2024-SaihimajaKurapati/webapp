@@ -186,7 +186,8 @@ const verifyUser = async (req, res) => {
         const { id } = req.params;
 
         // Find the user by the ID provided in the URL.
-        const user = await userModel.findByPk(id);
+        const user = await userModel.findOne({ where: { id } });
+        
 
         if (!user)
             return res.status(404).send('User not found. Verification link is invalid.');
