@@ -35,9 +35,7 @@ module.exports = (sequelize) => {
         }
     });
 
-    EmailVerification.associate = (models) => {
-        EmailVerification.belongsTo(models.User, { foreignKey: 'userId' });
-    };
+   
 
     return EmailVerification;
 };
