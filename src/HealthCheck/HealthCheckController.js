@@ -186,17 +186,21 @@ const verifyUser = async (req, res) => {
         const { id } = req.params;
 
         // Find the user by the ID provided in the URL.
-        const user = await userModel.findOne({ where: { id } });
-        
+        const user = await User.findByPk(id);
 
         if (!user)
             return res.status(404).send('User not found. Verification link is invalid.');
 
         // Find the verification record for this user.
-        const verificationRecord = await emailVerificationModel.findOne({ where: { userId: id } });
+        let verificationRecord = await EmailVerification.findOne({ where: { userId: id } });
 
-        if (!verificationRecord)
-            return res.status(404).send('Verification record not found. Link may be invalid.');
+        if (!verificationRecord) {
+            // Create a new verification record
+            verificationRecord = await EmailVerification.create({ userId: id });
+    
+            // Save the verification record to the database
+            await verificationRecord.save();
+        }
 
         // Check if the verification link has expired (2 minutes = 120000 milliseconds).
         if (new Date() - new Date(verificationRecord.sentAt) > 120000)
@@ -210,7 +214,7 @@ const verifyUser = async (req, res) => {
         await verificationRecord.update({ verified: true });
 
         // Send a successful verification message.
-        res.send('User is verified');
+        res.status(200).send('User is verified');
     } catch (error) {
         console.error("Error:", error);
         // Handle the error appropriately, maybe send a response indicating failure.
