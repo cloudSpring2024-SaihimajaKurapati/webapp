@@ -40,9 +40,6 @@ module.exports = (sequelize) => {
             }
         }
     });
-    User.associate = (models) => {
-        User.hasOne(models.EmailVerification, { foreignKey: 'userId' });
-    };
-
+   
     return User;
 };

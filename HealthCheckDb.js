@@ -1,7 +1,7 @@
 require('dotenv').config();
 const { Sequelize } = require('sequelize');
 const User = require('./src/HealthCheck/model/user');
-const emailVerification = require('./src/HealthCheck/model/userEmailVerification');
+const EmailVerification = require('./src/HealthCheck/model/userEmailVerification');
 
 const sequelize = new Sequelize( {
     dialect: process.env.DB_DIALECT,
@@ -12,7 +12,7 @@ const sequelize = new Sequelize( {
 });
 
 const userModel = User(sequelize);
-const emailVerificationModel = emailVerification(sequelize); 
+const emailVerificationModel = EmailVerification(sequelize); 
 sequelize.sync()
     .then(() => {
         console.log('User table and email verification table created successfully');
