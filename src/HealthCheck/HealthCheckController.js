@@ -186,13 +186,13 @@ const verifyUser = async (req, res) => {
         const { id } = req.params;
 
         // Find the user by the ID provided in the URL.
-        const user = await User.findByPk(id);
+        const user = await userModel.findByPk(id);
 
         if (!user)
             return res.status(404).send('User not found. Verification link is invalid.');
 
         // Find the verification record for this user.
-        const verificationRecord = await EmailVerification.findOne({ where: { userId: id } });
+        const verificationRecord = await emailVerificationModel.findOne({ where: { userId: id } });
 
         if (!verificationRecord)
             return res.status(404).send('Verification record not found. Link may be invalid.');
