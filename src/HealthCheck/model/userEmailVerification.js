@@ -23,11 +23,21 @@ module.exports = (sequelize) => {
                 isEmail: true
             }
         },
+        verified: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: false 
+        },
+
         sentAt: {
             type: DataTypes.DATE,
             allowNull: false
         }
     });
+
+    EmailVerification.associate = (models) => {
+        EmailVerification.belongsTo(models.User, { foreignKey: 'userId' });
+    };
 
     return EmailVerification;
 };
