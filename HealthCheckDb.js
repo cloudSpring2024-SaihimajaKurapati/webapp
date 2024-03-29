@@ -3,7 +3,7 @@ const { Sequelize } = require('sequelize');
 const User = require('./src/HealthCheck/model/user');
 const EmailVerification = require('./src/HealthCheck/model/userEmailVerification');
 
-const sequelize = new Sequelize( {
+const sequelize = new Sequelize({
     dialect: process.env.DB_DIALECT,
     host: process.env.DB_HOST,
     username: process.env.DB_USERNAME,
@@ -12,14 +12,19 @@ const sequelize = new Sequelize( {
 });
 
 const userModel = User(sequelize);
-const emailVerificationModel = EmailVerification(sequelize); 
-sequelize.sync()
-    .then(() => {
-        console.log('User table and email verification table created successfully');
-    })
-    .catch(err => {
-        console.error('Error creating User table:', err);
-    });
+const emailVerificationModel = EmailVerification(sequelize);
 
-module.exports = { sequelize, userModel, emailVerificationModel };
+const initializeDatabase = async () => {
+    try {
+        await sequelize.authenticate();
+        console.log('Connection to the database has been established successfully.');
 
+        // Synchronize models with the database
+        await sequelize.sync();
+        console.log('Models synchronized successfully');
+    } catch (error) {
+        console.error('Unable to connect to the database:', error);
+    }
+};
+
+module.exports = { sequelize, userModel, emailVerificationModel, initializeDatabase };

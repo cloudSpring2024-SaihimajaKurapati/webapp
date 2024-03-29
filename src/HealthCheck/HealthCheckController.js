@@ -1,4 +1,4 @@
-const { sequelize, userModel, emailVerificationModel } = require('../../HealthCheckDb');
+const { sequelize,initializeDatabase, userModel, emailVerificationModel } = require('../../HealthCheckDb');
 const bcrypt = require('bcrypt');
 const { validateUser } = require('../../src/HealthCheck/utils/generateAuthToken');
 const { v4: uuidv4 } = require('uuid');
@@ -46,8 +46,9 @@ const addUsers = async (req, res) => {
         return res.status(400).send('Invalid parameters provided');
     }
     try {
-        
-        const id = uuidv4();
+         await sequelize.authenticate();
+         await initializeDatabase(); 
+         const id = uuidv4();
 
         // Checking if user already exists
         const existingUser = await userModel.findOne({ where: { userName } });
@@ -62,6 +63,12 @@ const addUsers = async (req, res) => {
         // Creating new user with hashed password and generated UUID
         const newUser = await userModel.create({ id, firstName, lastName, userName, password: hashedPassword });
 
+        await emailVerificationModel.create({
+           userId: newUser.id,
+           email: newUser.userName, // Assuming the 'userName' field corresponds to the email
+           verified: false, // Assuming the user is not verified initially
+           sentAt: new Date() // Assuming the verification email is sent immediately
+    }); 
         // Exclude password from the response
         const responseData = {
             id: newUser.id,
@@ -74,8 +81,8 @@ const addUsers = async (req, res) => {
      logger.info('user created successfully')
 
      await publishMessageToPubSub(responseData);
-
         res.status(201).json(responseData);
+           
     } catch (error) {
         console.error('Error adding user:', error);
         logger.error('Error adding user:', error);
@@ -108,6 +115,11 @@ const getUsers = async (req, res) => {
         
         if (!authenticatedUser) {
             return res.status(404).send('User not found');
+        }
+        const verificationRecord = await emailVerificationModel.findOne({ where: { userId: authenticatedUser.id } });
+        if (!verificationRecord || !verificationRecord.verified) {
+            logger.warn('Unverified user attempted to access resource');
+            return res.status(403).send('Your account has not been verified');
         }
         logger.info('user retrieved successfully')
         res.status(200).json(authenticatedUser);
@@ -153,6 +165,12 @@ const updateUser = async (req, res) => {
             return res.status(400).send('Invalid parameters provided');
         }
 
+        const verificationRecord = await emailVerificationModel.findOne({ where: { userId: authenticatedUser.id } });
+        if (!verificationRecord || !verificationRecord.verified) {
+            logger.warn('Unverified user attempted to access resource');
+            return res.status(403).send('Your account has not been verified');
+        }
+
         // Check if password is provided and update the password accordingly
         if (password) {
             const hashedPassword = await bcrypt.hash(password, 10);
@@ -192,15 +210,15 @@ const verifyUser = async (req, res) => {
             return res.status(404).send('User not found. Verification link is invalid.');
 
         // Find the verification record for this user.
-       let verificationRecord = await EmailVerification.findOne({ where: { userId: id } });
+       const  verificationRecord = await EmailVerification.findOne({ where: { userId: id } });
 
-    if (!verificationRecord) {
+    //if (!verificationRecord) {
         // Create a new verification record
-        verificationRecord = await EmailVerification.create({ userId: id });
+      //  verificationRecord = await EmailVerification.create({ userId: id });
 
         // Save the verification record to the database
-        await verificationRecord.save();
-    }
+       // await verificationRecord.save();
+   // }
         if (!verificationRecord)
             return res.status(404).send('Verification record not found. Link may be invalid.');
 
