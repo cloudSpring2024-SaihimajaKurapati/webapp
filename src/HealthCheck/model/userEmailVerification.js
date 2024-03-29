@@ -12,7 +12,7 @@ module.exports = (sequelize) => {
             type: DataTypes.UUID,
             allowNull: false,
             references: {
-                model: 'Users', // Assuming your User model is named 'User'
+                model: 'User', // Assuming your User model is named 'User'
                 key: 'id'
             }
         },
