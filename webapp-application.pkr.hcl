@@ -13,13 +13,15 @@ source "googlecompute" "centos" {
   zone                = "us-east1-b"
   ssh_username        = "centos"
   image_name          = "custom-image-{{timestamp}}"
-  wait_to_add_ssh_keys = "20s"
+  wait_to_add_ssh_keys = "60s"
 }
 
 build {
   sources = ["source.googlecompute.centos"]
 
-  
+  provisioner "null" {}
+
+
   provisioner "file" {
     source      = "application.zip"
     destination = "/tmp/application.zip"
