@@ -13,6 +13,7 @@ source "googlecompute" "centos" {
   zone                = "us-east1-b"
   ssh_username        = "centos"
   image_name          = "custom-image-{{timestamp}}"
+  wait_to_add_ssh_keys = "20s"
 }
 
 build {
