@@ -8,7 +8,7 @@ packer {
 }
 
 source "googlecompute" "centos" {
-  project_id          = "cloudgcp-414104"
+  project_id          = "csyecloud-418914"
   source_image_family = "centos-stream-8"
   zone                = "us-east1-b"
   ssh_username        = "centos"
