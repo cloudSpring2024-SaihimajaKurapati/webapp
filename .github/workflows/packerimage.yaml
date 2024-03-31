@@ -91,4 +91,4 @@ jobs:
           chmod +x opsAgentConfig.sh
           
       - name: Build Google Cloud image with Packer
-        run: packer build webapp-application.pkr.hcl
+        run: packer build -debug webapp-application.pkr.hcl
