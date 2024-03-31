@@ -161,7 +161,7 @@ const updateUser = async (req, res) => {
 
         // Check if any fields other than firstName, lastName, and password are being updated
         if (Object.keys(rest).length !== 0) {
-            // logger.debug('invalid params provided');
+            logger.debug('invalid params provided');
             return res.status(400).send('Invalid parameters provided');
         }
 
@@ -190,7 +190,7 @@ const updateUser = async (req, res) => {
         res.status(204).end();
     } catch (error) {
         console.error('Error updating user:', error);
-        // logger.error('Error updating user:', error);
+        logger.error('Error updating user:', error);
         res.status(400).end();
     }
 };
