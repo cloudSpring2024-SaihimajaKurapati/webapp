@@ -18,10 +18,7 @@ source "googlecompute" "centos" {
 build {
   sources = ["source.googlecompute.centos"]
 
-   provisioner "pause" {
-    pause_before = "20s"  # Adjust the duration as needed, for example, 10 seconds
-  }
-
+  
   provisioner "file" {
     source      = "application.zip"
     destination = "/tmp/application.zip"
