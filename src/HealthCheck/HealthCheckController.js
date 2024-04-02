@@ -141,7 +141,7 @@ const updateUser = async (req, res) => {
         const authHeader = req.headers['authorization'];
 
         if (!authHeader || !authHeader.startsWith('Basic ')) {
-            logger.warn('unauthorized user')
+            logger.warn('unauthorized user');
             return res.status(401).send('Unauthorized');
         }
 
@@ -157,23 +157,23 @@ const updateUser = async (req, res) => {
         }
 
         // If the user is valid, proceed to update user data
-        const { firstName, lastName, password: newPassword, ...rest } = req.body;
+        const { firstName, lastName, newPassword, ...rest } = req.body;
 
-        // Check if any fields other than firstName, lastName, and password are being updated
+        // Check if any fields other than firstName, lastName, and newPassword are being updated
         if (Object.keys(rest).length !== 0) {
             logger.debug('invalid params provided');
             return res.status(400).send('Invalid parameters provided');
         }
 
-        const verificationRecord = await emailVerificationModel.findOne({ where: { userId: authenticatedUser.id } });
+        const verificationRecord = await emailVerificationModel.findOne({ where: { userId: user.id } });
         if (!verificationRecord || !verificationRecord.verified) {
             logger.warn('Unverified user attempted to access resource');
             return res.status(403).send('Your account has not been verified');
         }
 
-        // Check if password is provided and update the password accordingly
-        if (password) {
-            const hashedPassword = await bcrypt.hash(password, 10);
+        // Check if newPassword is provided and update the password accordingly
+        if (newPassword) {
+            const hashedPassword = await bcrypt.hash(newPassword, 10);
             await userModel.update(
                 { password: hashedPassword },
                 { where: { userName } }
@@ -191,9 +191,10 @@ const updateUser = async (req, res) => {
     } catch (error) {
         console.error('Error updating user:', error);
         logger.error('Error updating user:', error);
-        res.status(400).end();
+        res.status(500).send("Error updating user: " + error.message);
     }
 };
+
 
 const verifyUser = async (req, res) => {
     try {
