@@ -12,8 +12,16 @@ app.use((req, res) => {
     res.status(404).end();
 });
 
-const server= app.listen(port, () => {
-    console.log(`App listening on port ${port}`);
+const server = app.listen(port, async () => {
+    try {
+        await sequelize.authenticate();
+        await initializeDatabase(); // Initialize database tables if necessary
+        console.log('Database connection established successfully');
+        console.log(`App listening on port ${port}`);
+    } catch (error) {
+        console.error('Failed to connect to the database:', error);
+        process.exit(1); // Exit the application if database connection fails
+    }
 });
 
 module.exports = server;
