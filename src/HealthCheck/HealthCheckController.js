@@ -46,8 +46,8 @@ const addUsers = async (req, res) => {
         return res.status(400).send('Invalid parameters provided');
     }
     try {
-        //  await sequelize.authenticate();
-         await initializeDatabase(); 
+         //await sequelize.authenticate();
+         //await initializeDatabase(); 
          const id = uuidv4();
 
         // Checking if user already exists
@@ -62,12 +62,13 @@ const addUsers = async (req, res) => {
 
         // Creating new user with hashed password and generated UUID
         const newUser = await userModel.create({ id, firstName, lastName, userName, password: hashedPassword });
-
+        //await sequelize.authenticate();
+        //await initializeDatabase(); 
         await emailVerificationModel.create({
            userId: newUser.id,
            email: newUser.userName, // Assuming the 'userName' field corresponds to the email
            verified: false, // Assuming the user is not verified initially
-           sentAt: new Date() // Assuming the verification email is sent immediately
+           // Assuming the verification email is sent immediately
     }); 
         // Exclude password from the response
         const responseData = {
