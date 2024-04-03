@@ -46,7 +46,7 @@ const addUsers = async (req, res) => {
         return res.status(400).send('Invalid parameters provided');
     }
     try {
-         await sequelize.authenticate();
+        //  await sequelize.authenticate();
          await initializeDatabase(); 
          const id = uuidv4();
 
