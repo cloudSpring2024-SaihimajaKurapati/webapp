@@ -1,5 +1,5 @@
-const { DataTypes } = require('sequelize');
 
+const { DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
     const EmailVerification = sequelize.define('EmailVerification', {
@@ -12,7 +12,7 @@ module.exports = (sequelize) => {
             type: DataTypes.UUID,
             allowNull: false,
             references: {
-                model: 'User', // Assuming your User model is named 'User'
+                model: 'Users', // Correcting model name reference
                 key: 'id'
             }
         },
@@ -28,14 +28,12 @@ module.exports = (sequelize) => {
             allowNull: false,
             defaultValue: false 
         },
-
         sentAt: {
             type: DataTypes.DATE,
-            allowNull: false
+            allowNull: false,
+            defaultValue: DataTypes.NOW // Providing default value using DataTypes.NOW
         }
     });
-
-   
 
     return EmailVerification;
 };
