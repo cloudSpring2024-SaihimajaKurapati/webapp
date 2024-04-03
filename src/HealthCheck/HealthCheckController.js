@@ -25,10 +25,10 @@ const getHealthCheck = async (req, res) => {
     try {
         await sequelize.authenticate();
         const headerCount = Object.keys(req.headers).length;
-        if (headerCount > 8) {
-            logger.info('Request not supported')
-            return res.status(400).set('Cache-Control', 'no-cache').end();
-        }
+        // if (headerCount > 6) {
+        //     logger.info('Request not supported')
+        //     return res.status(400).set('Cache-Control', 'no-cache').end();
+        // }
         return res.set('Cache-Control', 'no-cache').status(200).end();
     } catch (error) {
         console.error(error);
@@ -46,8 +46,8 @@ const addUsers = async (req, res) => {
         return res.status(400).send('Invalid parameters provided');
     }
     try {
-         //await sequelize.authenticate();
-         //await initializeDatabase(); 
+         await sequelize.authenticate();
+         await initializeDatabase(); 
          const id = uuidv4();
 
         // Checking if user already exists
@@ -62,9 +62,14 @@ const addUsers = async (req, res) => {
 
         // Creating new user with hashed password and generated UUID
         const newUser = await userModel.create({ id, firstName, lastName, userName, password: hashedPassword });
-        //await sequelize.authenticate();
-        //await initializeDatabase(); 
-       
+        
+        await emailVerificationModel.create({
+            userId: newUser.id,
+            email: newUser.userName, // Assuming the 'userName' field corresponds to the email
+            verified: false, 
+            sentAt: new Date()
+      }); 
+
         // Exclude password from the response
         const responseData = {
             id: newUser.id,
@@ -78,22 +83,15 @@ const addUsers = async (req, res) => {
 
      await publishMessageToPubSub(responseData);
         
-       
-     await emailVerificationModel.create({
-            userId: newUser.id,
-            email: newUser.userName, // Assuming the 'userName' field corresponds to the email
-            verified: false, 
-            sentAt: new Date()
-     }); 
-
      res.status(201).json(responseData);
            
     } catch (error) {
         console.error('Error adding user:', error);
         logger.error('Error adding user:', error);
-        res.status(500).json("inside catch block");
+        res.status(400).json("inside catch block");
     }
 };
+
 
 const getUsers = async (req, res) => {
     try {
