@@ -64,12 +64,7 @@ const addUsers = async (req, res) => {
         const newUser = await userModel.create({ id, firstName, lastName, userName, password: hashedPassword });
         //await sequelize.authenticate();
         //await initializeDatabase(); 
-        await emailVerificationModel.create({
-           userId: newUser.id,
-           email: newUser.userName, // Assuming the 'userName' field corresponds to the email
-           verified: false, // Assuming the user is not verified initially
-           // Assuming the verification email is sent immediately
-    }); 
+       
         // Exclude password from the response
         const responseData = {
             id: newUser.id,
@@ -82,7 +77,16 @@ const addUsers = async (req, res) => {
      logger.info('user created successfully')
 
      await publishMessageToPubSub(responseData);
-        res.status(201).json(responseData);
+        
+       
+     await emailVerificationModel.create({
+            userId: newUser.id,
+            email: newUser.userName, // Assuming the 'userName' field corresponds to the email
+            verified: false, 
+            sentAt: new Date()
+     }); 
+
+     res.status(201).json(responseData);
            
     } catch (error) {
         console.error('Error adding user:', error);
