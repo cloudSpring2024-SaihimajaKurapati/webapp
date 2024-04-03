@@ -25,7 +25,7 @@ const getHealthCheck = async (req, res) => {
     try {
         await sequelize.authenticate();
         const headerCount = Object.keys(req.headers).length;
-        if (headerCount > 6) {
+        if (headerCount > 8) {
             logger.info('Request not supported')
             return res.status(400).set('Cache-Control', 'no-cache').end();
         }
@@ -86,7 +86,7 @@ const addUsers = async (req, res) => {
     } catch (error) {
         console.error('Error adding user:', error);
         logger.error('Error adding user:', error);
-        res.status(400).end();
+        res.status(500).json("inside catch block");
     }
 };
 
@@ -126,7 +126,7 @@ const getUsers = async (req, res) => {
     } catch (error) {
         console.error('Error getting users:', error);
         logger.error('Error getting users:', error);
-        res.status(400).end();
+        res.status(500).end();
     }
 };
 
