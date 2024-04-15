@@ -255,18 +255,18 @@ jobs:
           echo "Latest image name is $IMAGE_NAME"
           echo "::set-output name=image_name::$IMAGE_NAME"
 
-      # Create a new instance template with the new image and startup script
+     # Create a new instance template with the new image and startup script
       - name: Create a new instance template with startup script
         run: |
-          gcloud compute instance-templates create "${{ env.MIG_NAME }}-template-${{ steps.get-latest-image.outputs.image_name  }}" \
+          gcloud compute instance-templates create "${{ env.MIG_NAME }}-template-${{ steps.get-latest-image.outputs.image_name }}" \
             --machine-type=e2-medium \
-            --region=${{ env.GCP_REGION }} \
+            --region="${{ env.GCP_REGION }}" \
             --network="projects/${{ env.PROJECT_ID }}/global/networks/${{ env.NETWORK }}" \
             --subnet="projects/${{ env.PROJECT_ID }}/regions/${{ env.GCP_REGION }}/subnetworks/${{ env.SUBNETWORK }}" \
             --metadata=startup-script="${{ secrets.GCP_STARTUP_SCRIPT }}" \
-            --service-account=${{ env.SERVICE_ACCOUNT_EMAIL }} \
-            --scopes='https://www.googleapis.com/auth/cloud-platform' \
-            --tags='webapp-lb-target,application-instance' \
+            --service-account="${{ env.SERVICE_ACCOUNT_EMAIL }}" \
+            --scopes="https://www.googleapis.com/auth/cloud-platform" \
+            --tags="webapp-lb-target,application-instance" \
             --create-disk="auto-delete=yes,boot=yes,device-name=persistent-disk-0,image=projects/${{ secrets.PROJECTID }}/global/images/${{ steps.get-latest-image.outputs.image_name }},kms-key=projects/${{ secrets.PROJECTID }}/locations/${{ env.GCP_REGION }}/keyRings/${{ secrets.GCP_KEY_RING }}/cryptoKeys/${{ secrets.GCP_VM_CRYPTO_KEY }},mode=rw,size=20,type=pd-balanced"
 
 
