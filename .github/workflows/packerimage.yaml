@@ -265,7 +265,7 @@ jobs:
             --subnet="projects/${{ env.PROJECT_ID }}/regions/${{ env.GCP_REGION }}/subnetworks/${{ env.SUBNETWORK }}" \
             --metadata=startup-script="${{ secrets.GCP_STARTUP_SCRIPT }}" \
             --service-account=${{ env.SERVICE_ACCOUNT_EMAIL }} \
-            --scopes='https://www.googleapis.com/auth/cloud-platform'
+            --scopes='https://www.googleapis.com/auth/cloud-platform' \
             --tags='webapp-lb-target,application-instance' \
             --create-disk="auto-delete=yes,boot=yes,device-name=persistent-disk-0,image=projects/${{ secrets.GCP_PROJECT_ID }}/global/images/${{ steps.get-latest-image.outputs.image_name }},kms-key=projects/${{ secrets.GCP_PROJECT_ID }}/locations/${{ env.GCP_REGION }}/keyRings/${{ secrets.GCP_KEY_RING }}/cryptoKeys/${{ secrets.GCP_VM_CRYPTO_KEY }},mode=rw,size=20,type=pd-balanced"
 
