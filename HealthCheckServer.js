@@ -6,7 +6,7 @@ const port = 3000;
 app.use(express.json());
 
 app.use('/', healthCheckRoutes);
-app.use('/v1/user', healthCheckRoutes)
+app.use('/v5/user', healthCheckRoutes)
 
 app.use((req, res) => {
     res.status(404).end();
